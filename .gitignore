@@ -1,0 +1,9 @@
+.idea
+*.log
+.DS_Store
+!results/*/.gitkeep
+results/*
+!workspace/private/.gitkeep
+workspace/private/*
+!docs/report/build/.gitkeep
+docs/report/build
