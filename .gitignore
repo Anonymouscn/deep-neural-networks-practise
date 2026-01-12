@@ -5,5 +5,5 @@
 results/*
 !workspace/private/.gitkeep
 workspace/private/*
-!docs/report/build/.gitkeep
-docs/report/build
+!docs/build/.gitkeep
+docs/build
