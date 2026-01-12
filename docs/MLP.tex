@@ -58,7 +58,7 @@ Lotka--Volterra 模型常用于描述捕食-被捕食种群动力学。项目实
 \end{equation}
 
 \subsection{PINN 训练目标：残差约束与初值约束}\label{subsec:2}
-PINN 的典型损失由“方程残差 + 初值/边界误差”组成。本实验中重点对比了\textbf{硬初值约束（hard IC）}与不同输入特征编码方式。对于 hard IC，项目采用输出变换将初值条件结构化地写入网络输出（以实现为准）：
+PINN 的典型损失由“方程残差 + 初值/边界误差”组成~\cite{pinn_raissi}。本实验中重点对比了\textbf{硬初值约束（hard IC）}与不同输入特征编码方式。对于 hard IC，项目采用输出变换将初值条件结构化地写入网络输出（以实现为准）：
 \begin{equation}
 \tilde r(t)= y_1(t)\tanh(t)+\frac{100}{U_B},\qquad
 \tilde p(t)= y_2(t)\tanh(t)+\frac{15}{U_B},\label{eq:equation5}
@@ -79,7 +79,7 @@ PINN 的典型损失由“方程残差 + 初值/边界误差”组成。本实�
   \item \textbf{sin-only：}拼接 $[t,\sin(t),\sin(2t),\dots,\sin(6t)]$（共 7 维）；
   \item \textbf{Fourier 多尺度：}拼接 $[t,\sin(2\pi f t),\cos(2\pi f t)]$，频率 $f\in\{1,2,4,8\}$（共 9 维）。
 \end{itemize}
-直观上，Lotka--Volterra 的解呈现明显的周期性与尖峰式振荡结构。Fourier 特征更贴近“谱空间表达”，常能缓解神经网络的低频偏置（spectral bias）并提升对高频/局部快速变化的拟合能力。
+直观上，Lotka--Volterra 的解呈现明显的周期性与尖峰式振荡结构。Fourier 特征更贴近“谱空间表达”~\cite{fourier_features}，通常能缓解神经网络的低频偏置（spectral bias）并提升对高频/局部快速变化的拟合能力。
 
 \subsection{采样策略与训练设置}\label{subsec:4}
 本报告展示的图均对应 \textbf{hardIC + pseudo\_3k\_b2} 的配置（见图标题）：
@@ -139,7 +139,7 @@ PINN 的典型损失由“方程残差 + 初值/边界误差”组成。本实�
 \subsection{讨论：为何 Fourier + hardIC 更有效？}
 
 \subsubsection{谱偏置与周期系统的“频域捷径”}
-经典现象是：标准 MLP 在训练早期更容易学习低频成分（谱偏置）。而 Lotka--Volterra 的解虽然整体周期，但峰附近存在较强的局部高频变化。Fourier 特征将输入映射到更适合表示周期的空间，使网络更容易在较少参数更新下捕捉相位与频率结构，从而减少后期不稳定振荡或塌陷。
+经典现象是：标准 MLP 在训练早期更容易学习低频成分（谱偏置）~\cite{spectral_bias}。而 Lotka--Volterra 的解虽然整体周期，但峰附近存在较强的局部高频变化。Fourier 特征将输入映射到更适合表示周期的空间，使网络更容易在较少参数更新下捕捉相位与频率结构，从而减少后期不稳定振荡或塌陷。
 
 \subsubsection{硬约束降低可行域维度，提升后期稳定性}
 hard IC 在结构上保证初值严格满足，相当于从优化角度减少了“先拟合初值再拟合残差”的竞争关系，使得优化更多专注于动力学残差。对敏感系统而言，初值的微小偏差会随时间放大；hard IC 能显著降低误差传播起点的不确定性，这对长程稳定预测尤其关键。
@@ -164,7 +164,7 @@ hard IC 在结构上保证初值严格满足，相当于从优化角度减少了
 %训练数据集包含 $n_{\text{train}}=150$ 个函数样本，测试数据集包含 $n_{\text{test}}=1000$ 个函数样本；每个输入函数在 $m=100$ 个 sensors 位置采样，输出 $u(x)$ 在 $100$ 个 trunk 位置给出真值（full trunk）。
 
 %\subsection{DeepONet 结构：Branch--Trunk 组合}
-DeepONet 的基本形式为
+DeepONet 的基本形式为~\cite{deeponet_lu}
 \begin{equation}
 \hat u_\theta(x;f)=\sum_{k=1}^{p} b_\theta^{(k)}(f(x_1),\ldots,f(x_m))\; t_\theta^{(k)}(x),
 \end{equation}
